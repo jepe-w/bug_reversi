@@ -17,15 +17,12 @@ class Reversi
       output(@board)
 
       if finished?(@board)
-        puts '試合終了'
-        puts "白○:#{count_stone(@board, WHITE_STONE)}"
-        puts "黒●:#{count_stone(@board, BLACK_STONE)}"
+        display_of_finished
         break
       end
 
       unless placeable?(@board, @current_stone)
-        puts '詰みのためターンを切り替えます'
-        toggle_stone
+        nothing_can_do
         next
       end
 
@@ -35,6 +32,19 @@ class Reversi
 
       put_judge
     end
+  end
+
+  private
+
+  def nothing_can_do
+    puts '詰みのためターンを切り替えます'
+    toggle_stone
+  end
+
+  def display_of_finished
+    puts '試合終了'
+    puts "白○:#{count_stone(@board, WHITE_STONE)}"
+    puts "黒●:#{count_stone(@board, BLACK_STONE)}"
     puts 'finished!'
   end
 
@@ -48,8 +58,6 @@ class Reversi
   rescue StandardError => e
     puts "ERROR: #{e.message}"
   end
-
-  private
 
   def toggle_stone
     @current_stone = @current_stone == WHITE_STONE ? BLACK_STONE : WHITE_STONE
