@@ -17,12 +17,15 @@ class Reversi
       output(@board)
 
       if finished?(@board)
-        display_of_finished
+        puts '試合終了'
+        puts "白○:#{count_stone(@board, WHITE_STONE)}"
+        puts "黒●:#{count_stone(@board, BLACK_STONE)}"
         break
       end
 
       unless placeable?(@board, @current_stone)
-        nothing_can_do
+        puts '詰みのためターンを切り替えます'
+        toggle_stone
         next
       end
 
@@ -30,34 +33,45 @@ class Reversi
       @command = gets.chomp
       break if QUIT_COMMANDS.include?(@command)
 
-      put_judge
+      begin
+        if put_stone(@board, @command, @current_stone)
+          puts '配置成功、次のターン'
+          toggle_stone
+        else
+          puts '配置失敗、ターン据え置き'
+        end
+      rescue StandardError => e
+        puts "ERROR: #{e.message}"
+      end
     end
+
+    puts 'finished!'
   end
 
   private
 
-  def nothing_can_do
-    puts '詰みのためターンを切り替えます'
-    toggle_stone
-  end
+  # def nothing_can_do
+  #   puts '詰みのためターンを切り替えます'
+  #   toggle_stone
+  # end
 
-  def display_of_finished
-    puts '試合終了'
-    puts "白○:#{count_stone(@board, WHITE_STONE)}"
-    puts "黒●:#{count_stone(@board, BLACK_STONE)}"
-    puts 'finished!'
-  end
+  # def display_of_finished
+  #   puts '試合終了'
+  #   puts "白○:#{count_stone(@board, WHITE_STONE)}"
+  #   puts "黒●:#{count_stone(@board, BLACK_STONE)}"
+  #   puts 'finished!'
+  # end
 
-  def put_judge
-    if put_stone(@board, @command, @current_stone)
-      puts '配置成功、次のターン'
-      toggle_stone
-    else
-      puts '配置失敗、ターン据え置き'
-    end
-  rescue StandardError => e
-    puts "ERROR: #{e.message}"
-  end
+  # def put_judge
+  #   if put_stone(@board, @command, @current_stone)
+  #     puts '配置成功、次のターン'
+  #     toggle_stone
+  #   else
+  #     puts '配置失敗、ターン据え置き'
+  #   end
+  # rescue StandardError => e
+  #   puts "ERROR: #{e.message}"
+  # end
 
   def toggle_stone
     @current_stone = @current_stone == WHITE_STONE ? BLACK_STONE : WHITE_STONE
